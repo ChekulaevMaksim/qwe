@@ -5,51 +5,82 @@ namespace mergeSort
 {
     class Program
     {
-        /*Для решения задачи сортировки:
-        Сортируемый массив разбивается на две части примерно одинакового размера;
-        Каждая из получившихся частей сортируется отдельно, например — тем же самым алгоритмом;
-        Два упорядоченных массива половинного размера соединяются в один.*/
-        static IComparable[] Merge_Sort(IComparable[] massive)
+        //метод для слияния массивов
+        static void Merge(int[] array, int lowIndex, int middleIndex, int highIndex)
         {
-            if (massive.Length == 1)
-                return massive;
-            int mid_point = massive.Length / 2;
-            return Merge(Merge_Sort(massive.Take(mid_point).ToArray()), Merge_Sort(massive.Skip(mid_point).ToArray()));
-        }
-        static IComparable[] Merge(IComparable[] mass1, IComparable[] mass2)
-        {
-            int a = 0, b = 0;
-            IComparable[] merged = new IComparable[mass1.Length + mass2.Length];
-            for (int i = 0; i < mass1.Length + mass2.Length; i++)
+            var left = lowIndex;
+            var right = middleIndex + 1;
+            var tempArray = new int[highIndex - lowIndex + 1];
+            var index = 0;
+
+            while ((left <= middleIndex) && (right <= highIndex))
             {
-                if (b.CompareTo(mass2.Length) < 0 && a.CompareTo(mass1.Length) < 0)
-                    if (mass1[a].CompareTo(mass2[b]) > 0)
-                        merged[i] = mass2[b++];
-                    else
-                        merged[i] = mass1[a++];
+                if (array[left] < array[right])
+                {
+                    tempArray[index] = array[left];
+                    left++;
+                }
                 else
-                    if (b < mass2.Length)
-                    merged[i] = mass2[b++];
-                else
-                    merged[i] = mass1[a++];
+                {
+                    tempArray[index] = array[right];
+                    right++;
+                }
+
+                index++;
             }
-            return merged;
+
+            for (var i = left; i <= middleIndex; i++)
+            {
+                tempArray[index] = array[i];
+                index++;
+            }
+
+            for (var i = right; i <= highIndex; i++)
+            {
+                tempArray[index] = array[i];
+                index++;
+            }
+
+            for (var i = 0; i < tempArray.Length; i++)
+            {
+                array[lowIndex + i] = tempArray[i];
+            }
         }
+
+        //сортировка слиянием
+        static int[] MergeSort(int[] array, int lowIndex, int highIndex)
+        {
+            if (lowIndex < highIndex)
+            {
+                var middleIndex = (lowIndex + highIndex) / 2;
+                MergeSort(array, lowIndex, middleIndex);
+                MergeSort(array, middleIndex + 1, highIndex);
+                Merge(array, lowIndex, middleIndex, highIndex);
+            }
+
+            return array;
+        }
+
+        static int[] MergeSort(int[] array)
+        {
+            return MergeSort(array, 0, array.Length - 1);
+        }
+
+
         static void Main(string[] args)
         {
-            IComparable[] arr = new IComparable[100];
-            Random rd = new Random();
-            for (int i = 0; i < arr.Length; ++i)
-                arr[i] = rd.Next(1, 101);
-            Console.WriteLine("Массив перед сортировкой:");
-            foreach (int x in arr)
-                System.Console.Write(x + " ");
-            arr = Merge_Sort(arr);
-            Console.WriteLine("\n\nМассив после сортировки:");
-            foreach (int x in arr)
-                System.Console.Write(x + " ");
-            Console.WriteLine("\n\nДля выхода нажмите <Enter>.");
-            Console.ReadKey();
+            Console.WriteLine("Сортировка слиянием");
+            Console.Write("Введите элементы массива: ");
+            var s = Console.ReadLine().Split(new[] { " ", ",", ";" }, StringSplitOptions.RemoveEmptyEntries);
+            var array = new int[s.Length];
+            for (int i = 0; i < s.Length; i++)
+            {
+                array[i] = Convert.ToInt32(s[i]);
+            }
+
+            Console.WriteLine("Упорядоченный массив: {0}", string.Join(", ", MergeSort(array)));
+
+            Console.ReadLine();
         }
     }
 }

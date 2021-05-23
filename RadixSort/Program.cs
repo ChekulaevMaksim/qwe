@@ -53,7 +53,7 @@ namespace RadixSort
         }
         static void Main(string[] args)
         {
-            int[] arr = new int[100];
+            int[] arr = new int[10];
 
             Random rd = new Random();
             for (int i = 0; i < arr.Length; ++i)
